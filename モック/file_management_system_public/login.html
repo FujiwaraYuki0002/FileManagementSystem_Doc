@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ログイン</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./main.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+</header>
+
+<body>
+    <div class="container_login">
+
+        <div class="colmun_common">
+            <div class="left_label">
+                <label>ID</label><label>パスワード</label>
+            </div>
+            <div class="right_textbox">
+                <input type="text" class="textbox" size="40">
+                <input type="password" class="textbox" size="40">
+            </div>
+        </div>
+        <br>
+        <input type="submit" value="ログイン" class="button" onclick="location.href='file/search.html'">
+    </div>
+    <!-- オーバーレイ -->
+    <div id="overlay"></div>
+
+    <!-- エラーダイアログ -->
+    <div id="errorAlert">
+        <!--			<div class="errorMessage"></div>-->
+        <button id="okButton" onclick="closeAlert()">OK</button>
+    </div>
+</body>
+
+<script>
+    // 初期表示の処理
+    window.onload = function () {
+        // エラーがあるかどうか
+        if (document.getElementsByClassName('errorMessage').length > 0) {
+            errorAlert();
+        }
+    };
+</script>
+
+</html>

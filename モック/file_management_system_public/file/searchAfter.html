@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ファイル検索</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <div class="container">
+        <!--完了メッセージ-->
+        <th:if>
+            <!--		<div class="compelete-message">削除が完了しました</div>-->
+            <div class="non_compelete-message"></div>
+        </th:if>
+
+        <div class="title">
+            <h1>ファイル検索</h1>
+        </div>
+        <form data-validate action="searchAfter.html">
+            <div class="colmun">
+                <!--左側-->
+                <div class="search_content_left">
+                    <div class="colmun_common">
+                        <div class="left_label join-button">
+                            <br>
+                            <label>参加者</label>
+                        </div>
+                        <div class="right_textbox">
+                            <input type="button" value="参加者を選択" class="button" id="showButton">
+                            <!-- 選択者リスト -->
+                            <div class="external_selected_container">
+                                <div class="external_selected_list">
+                                    <ul id="externalSelectedList">
+                                        <!-- 選択者リストはクリック時に動的に変更されます -->
+                                    </ul>
+                                </div>
+                            </div>
+                            <br>
+                            <!-- モーダルのコンテンツ -->
+                            <!-- モーダルのコンテンツ -->
+                            <div id="myModal" class="modal">
+                                <div class="modal_content">
+                                    <div class="list_container">
+                                        <!-- ボタンコンテナ -->
+                                        <div class="button_container">
+                                            <!-- 参加者リストAとリストBの切り替えボタン -->
+                                            <button class="toggle_button" id="toggleTeamList" disabled>所属</button>
+                                            <!-- 初期状態でリストAボタンを非活性 -->
+                                            <button class="toggle_button" id="togglePostList">役職</button>
+                                        </div>
+                                        <!-- 参加者リストA-->
+                                        <div id="teamList" class="participant_list active">
+                                            <h3>所属リスト</h3>
+                                            <ul>
+                                                <li id="team1">役員</li>
+                                                <li id="team2">第１流通チーム</li>
+                                                <li id="team3">第２流通チーム</li>
+                                                <li id="team4">自治体チーム</li>
+                                                <li id="team5">総務</li>
+                                                <li id="team6">本社</li>
+                                                <li id="team7">ＳＥＳチーム</li>
+                                                <li id="team8">試用期間者</li>
+                                                <li id="team9">契約社員</li>
+                                                <li id="team10">組織に属さない</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- リストB-->
+                                        <div id="postList" class="participant_list">
+                                            <h3>役職リスト</h3>
+                                            <ul>
+                                                <li id="post1">代表取締役</li>
+                                                <li id="post2">専務取締役</li>
+                                                <li id="post3">取締役</li>
+                                                <li id="post4">マネージャー</li>
+                                                <li id="post5">エキスパート</li>
+                                                <li id="post6">リーダー</li>
+                                                <li id="post7">なし</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div id="detail_container" class="detail_container">
+                                        <div class="detail_list">
+                                            <ul id="detailList" class="participant_detail_list">
+                                                <!-- 詳細リストはクリック時に動的に変更される -->
+                                            </ul>
+                                        </div>
+
+                                        <div class="selected_container">
+                                            <h3>選択者リスト</h3>
+                                            <div class="selected_list">
+                                                <ul id="selectedList">
+                                                    <!-- 選択者リストはクリック時に動的に変更される -->
+                                                </ul>
+                                            </div>
+                                            <input type="button" value="完了" class="complete_button" id="closeButton">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--ここまでがモーダルウィンドウ関連-->
+                        </div>
+                    </div>
+                </div>
+                <!--右側-->
+                <div class="search_content_right">
+                    <div class="colmun_common search_colmun_common">
+                        <div class="left_label">
+                            <label>日付</label>
+                            <label>題名</label>
+                            <label>ファイル名</label>
+                            <label>テキスト内文字</label>
+                        </div>
+                        <div class="right_textbox">
+                            <div class="flexbox">
+                                <input type="date" class="date">
+                                <label>～</label>
+                                <input type="date" class="date">
+                            </div>
+                            <input type="text" class="textbox">
+                            <input type="text" class="textbox">
+                            <input type="text" class="textbox">
+                            <div class="flexbox">
+                                <input type="button" value="クリア" class="white colmun_button button"
+                                    onclick="location.href='search.html'">
+                                <input type="hidden" name="selectedData" id="selectedData">
+                                <input type="submit" class="button colmun_button" value="検索">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>題名</th>
+                    <th>日付</th>
+                    <th>参加者</th>
+                    <th>ファイル1</th>
+                    <th>ファイル2</th>
+                    <th>ファイル3</th>
+                    <th>DL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><span>○月〇〇会議</span></td>
+                    <td><span>yyyy/mm/dd</span></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropdown-button">参加者を確認</button>
+                            <div class="dropdown-content">
+                                <label>佐藤 太郎</label>
+                                <label>高橋 美咲</label>
+                                <label>鈴木 一郎</label>
+                                <label>田中 優子</label>
+                                <label>山本 直樹</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="../test.txt" download="テスト.txt" onclick="return testMessage()">yyyymmdd_〇〇.txt</a></td>
+                    <td><a href="../test100.png" download="テスト.doxs" onclick="return testMessage()">yyyymmdd_〇〇.doxs</a>
+                    </td>
+                    <td><a href="./test.mp3" download="テスト.mp3" onclick="return testMessage()">yyyymmdd_〇〇.mp3</a></td>
+                    <td><input type="submit" value="DL" class="dl button"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><span>○月人事考課面談　〇〇</span></td>
+                    <td><span>yyyy/mm/dd</span></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropdown-button">参加者を確認</button>
+                            <div class="dropdown-content">
+                                <label>松本 拓也</label>
+                                <label>木村 沙織</label>
+                                <label>清水 亮</label>
+                                <label>橋本 亜美</label>
+                                <label>長谷川 大輔</label>
+                                <label>小川 恵美</label>
+                                <label>中島 和也</label>
+                                <label>森田 沙菜</label>
+                                <label>石井 祐樹</label>
+                                <label>岡田 美優</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="./test.txt" download="テスト.txt" onclick="return testMessage()">yyyymmdd_〇〇.txt</a></td>
+                    <td><a href="./test.doxs" download="テスト.doxs" onclick="return testMessage()">yyyymmdd_〇〇.doxs</a>
+                    </td>
+                    <td><a href="./test.mp3" download="テスト.mp3" onclick="return testMessage()">yyyymmdd_〇〇.mp3</a></td>
+                    <td><input type="submit" value="DL" class="dl button"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><span>○月〇〇会議</span></td>
+                    <td><span>yyyy/mm/dd</span></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropdown-button">参加者を確認</button>
+                            <div class="dropdown-content">
+                                <label>岩田 蓮</label>
+                                <label>渡辺 結菜</label>
+                                <label>福田 翼</label>
+                                <label>山田 千尋</label>
+                                <label>森 俊介</label>
+                                <label>斉藤 由美</label>
+                                <label>島田 真琴</label>
+                                <label>木下 彩</label>
+                                <label>佐々木 大輔</label>
+                                <label>藤田 明日香</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="./test.txt" download="テスト.txt" onclick="return testMessage()">yyyymmdd_〇〇.txt</a></td>
+                    <td><a href="./test.doxs" download="テスト.doxs" onclick="return testMessage()">yyyymmdd_〇〇.doxs</a>
+                    </td>
+                    <td><a href="./test.mp3" download="テスト.mp3" onclick="return testMessage()">yyyymmdd_〇〇.mp3</a></td>
+                    <td><input type="submit" value="DL" class="dl button"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><span>○月人事考課面談　〇〇</span></td>
+                    <td><span>yyyy/mm/dd</span></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropdown-button">参加者を確認</button>
+                            <div class="dropdown-content">
+                                <label>清水 京介</label>
+                                <label>高木 亜沙美</label>
+                                <label>本田 俊輔</label>
+                                <label>坂本 志穂</label>
+                                <label>野口 大輔</label>
+                                <label>大野 美咲</label>
+                                <label>古田 翼</label>
+                                <label>谷口 夏希</label>
+                                <label>金子 雅俊</label>
+                                <label>鳥居 紗季</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="./test.txt" download="テスト.txt" onclick="return testMessage()">yyyymmdd_〇〇.txt</a></td>
+                    <td><a href="./test.doxs" download="テスト.doxs" onclick="return testMessage()">yyyymmdd_〇〇.doxs</a>
+                    </td>
+                    <td><a href="./test.mp3" download="テスト.mp3" onclick="return testMessage()">yyyymmdd_〇〇.mp3</a></td>
+                    <td><input type="submit" value="DL" class="dl button"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><span>○月〇〇会議</span></td>
+                    <td><span>yyyy/mm/dd</span></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropdown-button">参加者を確認</button>
+                            <div class="dropdown-content">
+                                <label>石川 優</label>
+                                <label>久保田 蓮</label>
+                                <label>井上 幸子</label>
+                                <label>野田 直子</label>
+                                <label>田村 陽介</label>
+                                <label>大西 優花</label>
+                                <label>松井 高志</label>
+                                <label>近藤 美里</label>
+                                <label>藤井 恵</label>
+                                <label>長田 翔太</label>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="./test.txt" download="テスト.txt" onclick="return testMessage()">yyyymmdd_〇〇.txt</a></td>
+                    <td><a href="./test.doxs" download="テスト.doxs" onclick="return testMessage()">yyyymmdd_〇〇.doxs</a>
+                    </td>
+                    <td><a href="./test.mp3" download="テスト.mp3" onclick="return testMessage()">yyyymmdd_〇〇.mp3</a></td>
+                    <td><input type="submit" value="DL" class="dl button"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="paging">
+            <input type="submit" value="l<" class="white button">
+            <input type="submit" value="<" class="white button">
+            <input type="submit" value=">" class="white button">
+            <input type="submit" value=">l" class="white button">
+            <p>1/1ページ</p>
+        </div>
+
+        <!--フッター-->
+        <footer></footer>
+
+        <!-- オーバーレイ -->
+        <div id="overlay"></div>
+
+        <!-- エラーダイアログ -->
+        <div id="errorAlert">
+            <!--			<div class="errorMessage"></div>-->
+            <button id="okButton" onclick="closeAlert()">OK</button>
+        </div>
+</body>
+<script>
+    // モーダルの要素
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("showButton");
+    var closeButton = document.getElementById("closeButton");
+
+    // リストの要素
+    var teamList = document.getElementById("teamList");
+    var postList = document.getElementById("postList");
+
+    // 詳細リストと選択者リストの要素
+    var detailList = document.getElementById("detailList");
+    var selectedList = document.getElementById("selectedList");
+
+    // 切り替えボタン
+    var toggleTeamList = document.getElementById("toggleTeamList");
+    var togglePostList = document.getElementById("togglePostList");
+
+    // 選択した人物のリスト
+    let selectedItems = '';
+    // 新しい外部選択者リストの要素
+    var externalSelectedList = document.getElementById("externalSelectedList");
+
+    // 各リストの中身
+    var details = {
+        team1: ["氏名：" + "田中 太郎" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "佐藤 花子" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "田中 太郎" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "佐藤 花子" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "伊東 四朗" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "遠藤 憲一" + ",所属：" + "あっち" + ",役職：" + "それ"],
+        team2: ["氏名：" + "鈴木 次郎" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "山田 花子" + ",所属：" + "あっち" + ",役職：" + "それ"],
+        team3: ["氏名：" + "加藤 守" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "藤本 美香" + ",所属：" + "あっち" + ",役職：" + "それ"],
+        post1: ["氏名：" + "John Doe" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "Jane Smith" + ",所属：" + "あっち" + ",役職：" + "それ"],
+        post2: ["氏名：" + "Tom Brown" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "Lucy Green" + ",所属：" + "あっち" + ",役職：" + "それ"],
+        post3: ["氏名：" + "Jan Jansen" + ",所属：" + "あっち" + ",役職：" + "それ",
+        "氏名：" + "Pietro van Dijk" + ",所属：" + "あっち" + ",役職：" + "それ"]
+    };
+    //追加する際の方法
+    details.team4 = ["氏名：" + "新井 拓" + ",所属：" + "あっち" + ",役職：" + "それ"];
+
+    // モーダルウィンドウ外にあるリストに追加する名前
+    var externalDetails = {
+        team1: ["田中 太郎", "佐藤 花子", "田中 太郎", "佐藤 花子", "伊東 四朗", "遠藤 憲一"],
+        team2: ["鈴木 次郎", "山田 花子"],
+        team3: ["加藤 守", "藤本 美香"],
+        post1: ["John Doe", "Jane Smith"],
+        post2: ["Tom Brown", "Lucy Green"],
+        post3: ["Jan Jansen", "Pietro van Dijk"]
+    };
+    externalDetails.team4 = ["新井 拓"];
+
+    //これを<li>のidに付与して受け渡す
+    var detailIds = {
+        team1: [1, 2, 3, 4, 18, 19],
+        team2: [5, 6],
+        team3: [7, 8],
+        team4: [9],
+        post1: [10, 11, 12, 13],
+        post2: [14, 15],
+        post3: [16, 17]
+    };
+
+    // モーダルを開く
+    btn.onclick = function () {
+        modalOpen();
+    }
+
+    // 完了ボタンをクリックでモーダルを閉じる
+    closeButton.onclick = function () {
+        modalClose();
+    }
+
+    // リスト1を表示する処理
+    toggleTeamList.onclick = function () {
+        teamOpen();
+    }
+
+    // リスト2を表示する処理
+    togglePostList.onclick = function () {
+        postOpen();
+    }
+
+    //初期表示の処理
+    window.onload = function () {
+        // エラーがあるかどうか
+        if (document.getElementsByClassName('errorMessage').length > 0) {
+            errorAlert();
+        }
+        //初期表示の際はリストを非表示にするために判定を実行
+        updateExternalSelectedListVisibility();
+    };
+
+    //DL確認用ダイアログ(実環境には不要)
+    function testMessage() {
+        window.alert('ファイルをダウンロードする');
+        return false;
+    }
+
+    //会議参加者のドロップダウン関連
+    // すべてのドロップダウンボタンを取得
+    var dropdownButtons = document.querySelectorAll('.dropdown-button');
+
+    // 各ボタンにクリックイベントを追加
+    dropdownButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            dropdownOpen(this, event);
+        });
+    });
+
+    // ドキュメント全体でクリックイベントをリッスンして、ドロップダウンを閉じる処理を追加
+    document.addEventListener('click', function (event) {
+        // クリックされた場所がドロップダウンボタンでない場合、すべてのドロップダウンを閉じる
+        dropdownCloseCheck(event);
+    });
+</script>
+
+</html>

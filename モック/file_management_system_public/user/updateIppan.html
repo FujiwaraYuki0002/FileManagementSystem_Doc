@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ユーザー更新</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <form data-validate action="index.html" onsubmit="return insertcheck()">
+        <div class="container">
+            <div class="non_compelete-message"></div>
+            <div class="title">
+                <h1>ユーザー更新</h1>
+            </div>
+            <div class="center">
+                <div class="colmun">
+                    <div class="content_left">
+                        <div class="colmun_common">
+                            <div class="left_label">
+                                <label>ユーザーID</label>
+                                <label>ユーザー名</label>
+                                <label>ユーザー名(カナ)</label>
+                                <label>パスワード</label>
+                                <label>確認用パスワード</label>
+                            </div>
+                            <div class="right_textbox">
+                                <p>:<span>testUser003</span></p>
+                                <!--一般ログインの場合、非活性になる-->
+                                <input type="text" class="textbox" size="40" value="〇〇〇〇" disabled>
+                                <!--一般ログインの場合、非活性になる-->
+                                <input type="text" class="textbox" size="40" value="××××" disabled>
+                                <!--一パスワードのみ活性化-->
+                                <input type="password" class="textbox" size="40" value="××××××××" required
+                                    validate[required]>
+                                <input type="password" class="textbox" size="40" value="××××××××" required
+                                    validate[required]>
+                                <input type="button" value="クリア" class="white colmun_button button"
+                                    onclick="location.href='update.html'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content_right">
+                        <div class="colmun_common">
+                            <div class="left_label">
+                                <label>所属</label>
+                                <br><br><br>
+                                <label>役職</label>
+                                <br><br><br>
+                                <label>権限</label>
+                                <label>ステータス</label>
+                            </div>
+                            <div class="right_textbox">
+                                <!--一般ログインの場合、非活性になる-->
+                                <div class="Form_layout">
+                                    <div class="ScrollBox">
+                                        <label class="input_label">
+                                            <input type="checkbox" value="1" name="teamId" checked disabled>役員<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="2" name="teamId" disabled>第1流通チーム<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" vvalue="3" name="teamId" disabled>第2流通チーム<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="4" name="teamId" disabled>自治体チーム<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="5" name="teamId" disabled>総務<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="6" name="teamId" disabled>本社<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="7" name="teamId" disabled>SESチーム<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="8" name="teamId" disabled>試用期間者<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="9" name="teamId" disabled>契約社員<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="checkbox" value="10" name="teamId" disabled>組織に属さない<br>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!--一般ログインの場合、非活性になる-->
+                                <div class="Form_layout">
+                                    <div class="ScrollBox">
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="1" disabled>代表取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="2" checked disabled>専務取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="3" disabled>取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="4" disabled>マネージャー<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="5" disabled>エキスパート<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="6" disabled>リーダー<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="7" disabled>なし<br>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!--一般ログインの場合、非活性になる-->
+                                <select name="" style="vertical-align: top;" disabled>
+                                    <option value="">管理者</option>
+                                    <option selected>一般</option>
+                                </select>
+                                <select name="" style="vertical-align: top;" disabled>
+                                    <option value="" selected>現職者</option>
+                                    <option>退職者</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--フッター-->
+        <footer>
+            <div class="left">
+                <input type="button" value="戻る" class="button" onclick="location.href='index.html'">
+            </div>
+            <div class="right">
+                <div class="display-inline">
+                    <input type="submit" value="更新" name="button1" class="button" action="index.html" disabled>
+                </div>
+            </div>
+        </footer>
+    </form>
+</body>
+<script>
+    // ページ読み込み時に初期値を保存
+    document.addEventListener("DOMContentLoaded", function () {
+        valueChangeCheck();
+    });
+</script>
+
+</body>
+
+</html>

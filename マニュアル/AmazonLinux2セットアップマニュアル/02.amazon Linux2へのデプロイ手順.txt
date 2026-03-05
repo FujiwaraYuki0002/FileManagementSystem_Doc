@@ -1,0 +1,777 @@
+【毎期同時にやること】
+
+・TeraTerm接続（ファイル→新しい接続）
+ホスト：192.168.2.98
+ユーザー：ec2-user
+
+・認証の秘密鍵のファイルを選んで接続する
+
+・管理者権限へ移行
+sudo su -
+
+・tomcat起動
+systemctl start tomcat
+
+・postgreSQL起動
+systemctl start postgresql-13
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【よく使うもの】
+
+・エラー時、Tomcatのログを確認
+cat /usr/local/src/apache-tomcat-10.1.40/logs/catalina.out
+
+・ログファイルの中身を削除
+> /usr/local/src/apache-tomcat-10.1.40/logs/catalina.out
+
+
+・管理者(root)でログイン
+sudo su -
+※管理者じゃない場合は、頭にsudoをつけて実行する必要がある
+
+・パーミッション確認
+ls -ltr　確認したいものがあるパス
+
+・所有権を付与する
+chown グループ名:ユーザ名 ファイルパス
+
+・アクセス権を付与する
+chmod 777 ※ファイルパス
+
+・自分の現在のフォルダーの位置を見る
+pwd
+
+・隠しファイルも表示する
+ls -a
+
+・フォルダ移動したいとき
+cd
+
+・メモリ使用状況確認
+free
+
+・タイムゾーンの変更
+ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【Javaインストール】
+
+・AmazonCorretto公開キーをインポートし、リポジトリをシステム リストに追加
+rpm --import https://yum.corretto.aws/corretto.key
+curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo
+
+・Corretto 21 をインストール
+yum install -y java-21-amazon-corretto-devel
+
+・バージョン確認
+java -version
+
+
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【Apache】
+dnf -y install httpd
+httpd -v
+sudo systemctl start httpd
+sudo systemctl enable httpd.service
+sudo systemctl status httpd.service
+systemctl is-enabled httpd.service
+curl -s http://localhost
+
+
+【Tomcat】
+
+・インストールできるパッケージの確認
+--amazon-linux-extras | grep tomcat
+
+・次のコマンドを実行して tomcat10 をインストール
+wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.40/bin/apache-tomcat-10.1.40.tar.gz
+
+・展開
+tar -xzvf apache-tomcat-10.1.40.tar.gz
+
+
+・場所の移動
+mv apache-tomcat-10.1.40 /usr/local/src/
+
+・シンボリックリンク作成
+ln -s /usr/local/src/apache-tomcat-10.1.40/ /usr/local/src/tomcat
+
+・ダウンロードしたファイルを削除
+rm -f apache-tomcat-10.1.40.tar.gz
+
+・権限追加
+sudo useradd -r -s /sbin/nologin tomcat
+sudo chown -R tomcat:tomcat /usr/local/src/apache-tomcat-10.1.40
+sudo chown -R tomcat:tomcat /usr/local/src/tomcat
+
+・バージョン確認
+tomcat version
+　→./version.sh
+
+・Tomcat環境変数定義ファイル編集
+vi /etc/sysconfig/tomcat
+
+※ファイルの中に書くもの
+・javaHome 確認
+readlink -f $(which java)
+
+・/usr/lib/jvm/java-21-amazon-corretto.x86_64/bin/java
+このようにでた場合はJavaHomeに以下の記述
+/usr/lib/jvm/java-21-amazon-corretto.x86_64
+-------------------------
+JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto.aarch64
+CATALINA_HOME=/usr/local/src/apache-tomcat-10.1.40
+CATALINA_PID=/var/run/catalina.pid
+-------------------------
+
+ 
+・ファイルの中身確認
+view /etc/sysconfig/tomcat
+
+
+・Tomcat環境変数読み込み
+source /etc/sysconfig/tomcat
+
+・Tomcatログクリアスクリプト編集
+vi /etc/cron.daily/tomcat
+
+※ファイルの中に書くもの
+-------------------------
+#!/bin/bash
+source /etc/sysconfig/tomcat
+find $CATALINA_HOME/logs -name '*.out' -mtime +30 -delete
+find $CATALINA_HOME/logs -name '*.log' -mtime +30 -delete
+find $CATALINA_HOME/logs -name '*.txt' -mtime +30 -delete
+-------------------------
+
+・ファイルの中身確認
+view /etc/cron.daily/tomcat
+
+
+・Tomcatログクリアスクリプトに実行権限付加
+chmod +x /etc/cron.daily/tomcat
+
+
+・Tomcat設定ファイル編集
+vi $CATALINA_HOME/conf/server.xml
+
+※ protocol="AJP/1.3" と書かれたConnector部分のコメントアウトを外す
+-------------------------
+<Connector protocol="AJP/1.3"
+               address="localhost"
+               port="8009"
+               redirectPort="8443"
+            maxParameterCount="1000"
+            secretRequired="false"
+               />
+-------------------------
+
+・Tomcat起動スクリプト作成・編集
+vi /etc/systemd/system/tomcat.service
+
+
+※ファイルの中に書くもの
+-------------------------
+[Unit]
+Description=Apache Tomcat Servlet Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/tomcat
+PIDFile=/var/run/catalina.pid
+ExecStart=/bin/bash -c "${CATALINA_HOME}/bin/startup.sh"
+ExecStop=/bin/bash -c "${CATALINA_HOME}/bin/shutdown.sh;/usr/bin/tail -f /dev/null --pid=`cat /var/run/catalina.pid`"
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target
+-------------------------
+
+# エディタで .bash_profile ファイル開く
+sudo vi ~/.bash_profile
+
+# 以下の行を追加する
+export CATALINA_HOME=/usr/local/src/tomcat
+
+# 反映する
+source ~/.bash_profile
+
+・リロード
+systemctl daemon-reload
+
+・有効化
+systemctl enable tomcat
+   →systemctl enable tomcat.service
+
+・Tomcatの起動
+systemctl start tomcat
+
+・Tomcatの起動確認（activeなら成功）
+systemctl status tomcat
+
+
+※手動で起動(この方法でしか起動できない場合は何か問題があるかも)
+cd /usr/local/src/apache-tomcat-10.1.40/bin
+./startup.sh
+
+※シャットダウン
+cd /usr/local/src/apache-tomcat-10.1.39/bin
+./shutdown.sh
+
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【TeraTerm】
+
+・一時的にパスワード認証を許可するようSSH設定変更
+vi /etc/ssh/sshd_config
+
+※コメントアウトを下記のように切り替える
+-------------------------
+PasswordAuthentication yes
+#PasswordAuthentication no
+-------------------------
+
+・起動確認
+systemctl status sshd
+
+
+・[設定]-[SSH鍵生成]を選択
+RSAを選択、ほかの入力項目は初期値のままにして設定
+→秘密鍵ファイル（id_rsa）と公開鍵ファイル（id_rsa.pub）が生成される
+
+
+・SSH接続の設定
+vi .ssh/authorized_keys
+※公開鍵ファイルの中身を張り付ける
+
+・TeraTerm接続を一度切って、接続しなおす
+ユーザ名 : ec2-user
+RSA/DSA/ECDSA/DE25519鍵を使用する : ●
+秘密鍵 :TeraTermで作成した秘密鍵のパス
+
+
+・パスワード認証できないようSSH設定変更
+vi /etc/ssh/sshd_config
+
+※コメントアウトを下記のように切り替える
+-------------------------
+#PasswordAuthentication yes
+PasswordAuthentication no
+-------------------------
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【PostgreSQL】
+
+・リポジトリ取得
+rpm -ivh --nodeps https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
+・置換
+sed -i.bak 's/$releasever/7/g' "/etc/yum.repos.d/pgdg-redhat-all.repo"
+
+・書換
+vim /etc/yum.repos.d/pgdg-redhat-all.repo
+
+※ファイルの中に書くもの
+-------------------------
+[pgdg13]
+name=PostgreSQL 13 for RHEL/CentOS 7 - x86_64
+baseurl=https://download.postgresql.org/pub/repos/yum/13/redhat/rhel-7-x86_64
+enabled=1　←13はここを1、13以外は0
+gpgcheck=1
+gpgkey=https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+-------------------------
+
+・リポジトリの更新
+yum clean all
+yum update
+
+・インストール
+yum install -y postgresql13
+yum install -y postgresql13-server postgresql13-contrib
+
+
+・pidの書き換え
+vi /etc/systemd/system/postgresql-15.service
+
+※ファイルの中に書くもの 2025/5/6 これ書いてないので必要かも？
+-------------------------
+
+[Unit]
+Description=Apache Tomcat Servlet Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/tomcat
+PIDFile=/var/run/catalina.pid
+ExecStart=/bin/bash -c "${CATALINA_HOME}/bin/startup.sh"
+ExecStop=/bin/bash -c "
+KillMode=mixed
+Environment="JAVA_OPTS=-Xms512m -Xmx1536m -XX:+ParallelRefProcEnabled -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+
+[Install]
+WantedBy=multi-user.target
+-------------------------
+
+※この上のはＤＢインストールでは一旦使わない
+・15インストール
+dnf install -y postgresql15-server
+
+インストール場所
+/usr/share/doc/postgresql15
+
+-- postgresql15-server-15.12-1.amzn2023.0.2.x86_64
+
+・初期セットアップ
+postgresql-setup initdb
+
+パスワード
+passwd postgres
+Justin001
+
+・システムデーモンのリロード※.serviceなどのファイルを編集した時には必要な操作
+systemctl daemon-reload
+
+
+
+・有効化
+systemctl enable postgresql
+
+・起動
+systemctl start postgresql
+
+・ステータス確認
+systemctl status postgresql
+
+・再起動
+systemctl restart postgresql
+
+
+※参考サイト：https://postgresweb.com/install-postgresql13-on-amazon-linux-2
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【データベースユーザー設定】
+
+・管理者でシェルにログイン
+--psql
+
+su - postgres
+
+・ユーザー追加
+createuser -P justinuser
+
+・パスワードを決めて入力する
+Justin001
+
+・確認
+psql -c 'select usename from pg_user;'
+
+・justinuserでシェルにログイン
+psql
+
+・データベース作成
+create database file_management_system owner justinuser;
+
+
+・確認
+\l
+
+・シェルからログアウト
+\q
+
+・退出する
+exit
+
+・ペア認証からパスワード認証に設定変更
+vi /var/lib/pgsql/data/pg_hba.conf
+
+※下記のように変更
+-------------------------
+--md5
+
+# "local" is for Unix domain socket connections only
+#local   all             all                                     password
+local   all             all                                     md5
+# IPv4 local connections:
+#host    all             all             127.0.0.1/32            ident
+host    all             all             127.0.0.1/32            md5
+# IPv6 local connections:
+#host    all             all             ::1/128                 ident
+host    all             all             ::1/128                 md5
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+#local   replication     all                                     password
+#host    replication     all             127.0.0.1/32            ident
+#host    replication     all             ::1/128                 ident
+local   replication     all                                     md5
+host    replication     all             127.0.0.1/32            md5
+host    replication     all             ::1/128                 md5
+
+・postgresユーザーに切替
+su - postgres
+
+
+・管理者にパスワードを設定する
+psql
+ALTER USER postgres PASSWORD 'Justin001';
+
+
+・シェルからログアウト
+\q
+
+
+・退出する
+exit
+
+
+・再起動
+systemctl restart postgresql
+
+・ステータス確認
+systemctl status postgresql
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【データベース作成準備】
+
+・.splファイルと.shファイルを作成
+
+※.sqlファイルはテーブルcreateと初期設定がinsertされるもの
+※.shファイルの中身
+-------------------------
+#!/bin/bash
+
+# 接続情報
+DB_NAME="file_management_system"
+DB_USER="justinuser"
+SQL_FILE="/usr/local/src/INSERT_DB.sql"
+DB_PASSWORD="Justin001"
+
+# SQL を実行
+export PGPASSWORD="$DB_PASSWORD"
+psql -U "$DB_USER" -d "$DB_NAME" -f "$SQL_FILE"
+
+unset PGPASSWORD
+
+# 終了コードを確認
+if [ $? -eq 0 ]; then
+    echo "SQL ファイルの実行が成功しました。"
+else
+    echo "SQL ファイルの実行に失敗しました。" >&2
+fi
+-------------------------
+
+・TeraTermで2つのファイルをLinux環境に転送
+（該当ファイルをTeraTermにドロップすると送信する画面が出る）
+
+
+・ファイルをroot権限のある場所に移動
+mv /home/ec2-user/INSERT_DB.sql /usr/local/src/INSERT_DB.sql
+mv /home/ec2-user/DB.sh /usr/local/src/DB.sh
+
+
+・そのファイルオーナーをrootに変更
+chown root:root /usr/local/src/INSERT_DB.sql
+chown root:root /usr/local/src/DB.sh
+
+・改行コード変更
+--dos2unix /usr/local/src/INSERT_DB.sql
+
+
+・権限付与
+cd /usr/local/src/
+chmod +x DB.sh
+
+
+
+・実行
+su - postgres
+cd /usr/local/src/
+source ./DB.sh
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【データベースリストア】
+
+・リストア実行
+/usr/local/src/DB.sh
+
+・postgresユーザーに切替
+psql -U postgres -d  file_management_system
+
+psql -U justinuser -d file_management_system
+
+
+・テーブル一覧を確認
+\d
+
+
+・スキーマ確認
+\dn
+
+
+--テーブル作成失敗するので手動で
+--ユーザーマスタ作成
+CREATE TABLE public.m_user (
+    user_id character varying(20) PRIMARY KEY,
+    post_id integer NOT NULL,
+    user_name character varying(100) NOT NULL,
+    user_name_kana character varying(100) NOT NULL,
+    password character varying(100) NOT NULL,
+    role integer NOT NULL,
+    retirement_flg integer DEFAULT 0 NOT NULL,
+    first_create_date timestamp without time zone NOT NULL,
+    last_modified_date timestamp without time zone NOT NULL,
+    last_modified_user character varying(20) NOT NULL,
+    version integer DEFAULT 1 NOT NULL,
+    FOREIGN KEY(post_id) REFERENCES m_post(post_id)
+);
+
+ALTER TABLE IF EXISTS public.m_user OWNER to justinuser;
+
+--ユーザー権限付与
+REVOKE ALL ON TABLE public.m_user FROM justinuser;
+GRANT SELECT, INSERT, UPDATE ON TABLE public.m_user TO justinuser;
+--管理者権限付与
+GRANT ALL ON TABLE public.m_user TO postgres;
+
+--ユーザーの初期値
+INSERT INTO m_user(
+user_id,
+post_id,
+user_name,
+user_name_kana,
+password,
+role,
+first_create_date,
+last_modified_date,
+last_modified_user)
+VALUES (
+'AdminTest01',
+1,
+'管理者ユーザー',
+'カンリシャユーザー',
+'$2a$10$Mrh1F8X7FKamLdHlGVAhQu2Jf2k0X.0n53FOLX2ltCeFIlei9NYjm',
+1,
+current_timestamp , 
+current_timestamp ,
+'AdiminTest01');
+
+
+--所属管理マスタ作成
+CREATE TABLE public.m_user_team (
+    user_id character varying(20) NOT NULL,
+    team_id integer NOT NULL,
+    first_create_date timestamp without time zone NOT NULL,
+    last_modified_date timestamp without time zone NOT NULL,
+    last_modified_user character varying(20) NOT NULL,
+    version integer DEFAULT 1 NOT NULL,
+	PRIMARY KEY (user_id, team_id),
+    FOREIGN KEY(user_id) REFERENCES m_user(user_id),
+    FOREIGN KEY(team_id) REFERENCES m_team(team_id)
+);
+
+ALTER TABLE IF EXISTS public.m_user_team OWNER to justinuser;
+
+--ユーザー権限付与
+REVOKE ALL ON TABLE public.m_user_team FROM justinuser;
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.m_user_team TO justinuser;
+--管理者権限付与
+GRANT ALL ON TABLE public.m_user_team TO postgres;
+
+--所属管理マスタの初期値
+INSERT INTO m_user_team (
+user_id,
+team_id, 
+first_create_date, 
+last_modified_date, 
+last_modified_user) 
+VALUES (
+'AdminTest01',
+1,
+current_timestamp , 
+current_timestamp ,
+'AdiminTest01');
+
+
+--会議参加者作成
+CREATE TABLE IF NOT EXISTS public.t_join_user(
+    file_id integer NOT NULL,
+	serial_number integer NOT NULL,
+    user_id character varying(20) NOT NULL,
+    first_create_date timestamp without time zone NOT NULL,
+    last_modified_date timestamp without time zone NOT NULL,
+    last_modified_user character varying(20)  NOT NULL,
+    version integer NOT NULL DEFAULT 1,
+	PRIMARY KEY (file_id, serial_number, user_id),
+    FOREIGN KEY(file_id,serial_number) REFERENCES t_file(file_id,serial_number),
+    FOREIGN KEY(user_id) REFERENCES m_user(user_id)
+);
+
+ALTER TABLE IF EXISTS public.t_join_user OWNER to justinuser;
+
+--ユーザー権限付与
+REVOKE ALL ON TABLE public.t_join_user FROM justinuser;
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.t_join_user TO justinuser;
+--管理者権限付与
+GRANT ALL ON TABLE public.t_join_user TO postgres;
+
+
+★★★SQLのバージョンが合わない場合
+
+・バージョン対策をしてデプロイし直す必要あり
+（Linuxサーバー側のpostgreSQLのバージョンのほうが低い場合はほぼエラーになる。）
+
+・リストア先のバージョンを確認するとき
+pg_restore --version
+
+
+★★★Justinuserで操作したい場合
+
+・justinuserのfile_management_systemに切り替える
+psql -U justinuser -d file_management_system
+
+・justinuserのパスワードを入力する
+Justin001
+
+
+★★★管理者権限のパスワードがわからない
+passwd postgres
+でパスワードを変更する
+
+■■■■■■■■■■■■■■■■■■■■■■■■
+
+【アプリケーションデプロイ】
+
+※デプロイ時に、ソースのコメントアウト切り替えが必要なもの
+
+・template/file/search.html
+405行目付近
+
+・service/TExclusiveControlService.java
+172行目、245行目付近
+
+・application.properties
+5行目付近
+
+
+※デプロイ時に、確認が必要なこと
+→TomcatのバージョンにSpringbootバージョンが対応しているかどうか
+
+・warのデプロイ先
+mv /home/ec2-user/file_management_system.war /usr/local/src/apache-tomcat-10.1.40/webapps/file_management_system.war
+
+
+systemctl stop tomcat
+・Tomcatの起動
+systemctl start tomcat
+
+・Tomcatの起動確認（activeなら成功）
+systemctl status tomcat
+
+
+【managerページからデプロイ】
+
+・context.xml修正
+vi usr/local/src/apache-tomcat-10.1.40/webapps/manager/META-INF/context.xml
+
+※ファイルの中で置換 ※コメントアウトする
+-------------------------
+<!--
+<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+           allow="127\.\d+\.\d+\.\d+|::1|192\.168\.\d+\.\d+" />
+-->
+-------------------------
+
+・tomcat-users.xml修正
+vi /usr/local/src/apache-tomcat-10.1.40/conf/tomcat-users.xml
+
+※ファイルの中で置換　ブラウザ上でtomcat/managerにアクセスするときのユーザー/パス
+-------------------------
+<tomcat-users>
+    <role rolename="manager-gui"/>
+    <user username="admin" password="admin123" roles="manager-gui"/>
+</tomcat-users>
+-------------------------
+
+・tomcatユーザーに権限付与
+--chown -R tomcat:tomcat /usr/local/src/apache-tomcat-10.1.40
+
+・ディレクトリ内のすべてのファイルとフォルダに対して権限付与
+chmod -R 755 /usr/local/src/apache-tomcat-10.1.40/bin
+chmod -R 775 /usr/local/src/apache-tomcat-10.1.40/logs
+chmod -R 775 /usr/local/src/apache-tomcat-10.1.40/temp
+
+
+※pg_hba.conf修正（必要であれば）
+vi /var/lib/pgsql/13/data/pg_hba.conf
+
+
+※postgresql.conf修正（必要であれば）
+vi /var/lib/pgsql/13/data/postgresql.conf
+
+
+★★★再デプロイの場合
+
+/managerにアクセスする
+
+配備解除をする
+
+warファイルをアップロードして再配備する。
+
+
+★★★ヒープサイズ変更
+・tomcat.serviceファイルを編集
+vi /etc/systemd/system/tomcat.service
+
+リロードして再起動
+systemctl daemon-reload
+systemctl restart tomcat
+
+
+★★★ポートサイズ変更
+
+vi $CATALINA_HOME/conf/server.xml
+
+※ <Connector protocol="HTTP/1.1"の中に下記を追加する↓
+maxPostSize="2097152000"
+
+
+★★★スプリングのファイルサイズ変更
+application.propatiesファイルを修正
+
+spring.servlet.multipart.max-file-size=1000MB
+spring.servlet.multipart.max-request-size=1000MB→2000MBに変更
+
+
+★★★postgreSQLのメモリサイズ変更
+vi /var/lib/pgsql/data/postgresql.conf
+
+・shared_buffers=512MB
+・work_mem=8MB
+・maintenance_work_mem=256MB
+
+
+■■■■■■■■必要であれば■■■■■■■■■■■
+
+【ファイアウォールインストール】
+
+・firewalld をインストール
+yum install firewalld
+
+・有効化
+systemctl enable firewalld
+
+・firewalldの起動
+systemctl start firewalld
+
+http://ec2-16-171-239-191.eu-north-1.compute.amazonaws.com:8080/file_management_system/login

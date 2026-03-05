@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ユーザー登録</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <form data-validate action="index.html" onsubmit="return insertcheck()">
+        <div class="container">
+
+            <div class="non_compelete-message"></div>
+
+            <div class="title">
+                <h1>ユーザー登録</h1>
+            </div>
+            <div class="center">
+                <div class="colmun">
+                    <div class="content_left">
+                        <div class="colmun_common">
+                            <div class="left_label">
+                                <label>ユーザーID</label>
+                                <label>ユーザー名</label>
+                                <label>ユーザー名(カナ)</label>
+                                <label>パスワード</label>
+                                <label>確認用パスワード</label>
+                            </div>
+                            <div class="right_textbox">
+                                <input type="text" class="textbox" size="40" placeholder="半角英数字を含む8文字～20文字" id="input1"
+                                    required validate[required]>
+                                <input type="text" class="textbox" size="40" placeholder="全角文字で100文字以内" id="input2"
+                                    required validate[required]>
+                                <input type="text" class="textbox" size="40" placeholder="全角カタカナ文字で100文字以内" id="input3"
+                                    required validate[required]>
+                                <input type="password" class="textbox" size="40" placeholder="半角英数字を含む8文字～20文字"
+                                    id="input4" required validate[required]>
+                                <input type="password" class="textbox" size="40" id="input5" required
+                                    validate[required]>
+                                <input type="button" value="クリア" class="white colmun_button button"
+                                    onclick="location.href='insert.html'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content_right">
+                        <div class="colmun_common">
+                            <div class="left_label">
+                                <label>所属</label>
+                                <br><br><br>
+                                <label>役職</label>
+                                <br><br><br>
+                                <label>権限</label>
+                                <br><br><br>
+                            </div>
+                            <div class="right_textbox">
+                                <div class="Form_layout">
+                                    <div class="ScrollBox" id="input1">
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="1" name="teamId" id="1">役員<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="2" name="teamId" id="2">第1流通チーム<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="3" name="teamId" id="3">第2流通チーム<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="4" name="teamId" id="4">自治体チーム<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="5" name="teamId" id="5">総務<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="6" name="teamId" id="6">本社<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="7" name="teamId" id="7">SESチーム<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="8" name="teamId" id="8">試用期間者<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="9" name="teamId" id="9">契約社員<br>
+                                        </label>
+                                        <label class="input_label checkList">
+                                            <input type="checkbox" value="10" name="teamId" id="10">組織に属さない<br>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="Form_layout">
+                                    <div class="ScrollBox">
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="1" required
+                                                validate[required]>代表取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="2">専務取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="3">取締役<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="4">マネージャー<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="5">エキスパート<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="6">リーダー<br>
+                                        </label>
+                                        <label class="input_label">
+                                            <input type="radio" name="postId" value="7">なし<br>
+                                        </label>
+                                    </div>
+                                </div>
+                                <select name="" style="vertical-align: top;">
+                                    <option value="">管理者</option>
+                                    <option>一般</option>
+                                </select>
+                                <br><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--フッター-->
+        <footer>
+            <div class="left">
+                <input type="button" value="戻る" class="button" onclick="location.href='index.html'">
+            </div>
+            <div class="right">
+                <div class="display-inline">
+                    <input type="submit" value="登録" class="button" disabled>
+                </div>
+            </div>
+        </footer>
+    </form>
+    <!-- オーバーレイ -->
+    <div id="overlay"></div>
+
+    <!-- エラーダイアログ -->
+    <div id="errorAlert">
+        <!--			<div class="errorMessage"></div>-->
+        <button id="okButton" onclick="closeAlert()">OK</button>
+    </div>
+</body>
+<script>
+    //登録ボタン活性・非活性
+    jQuery(function ($) {
+        $('form[data-validate]').on('input', function () {
+            userInsertCheck(!this.checkValidity());
+        });
+    });
+    // 初期表示の処理
+    window.onload = function () {
+        // エラーがあるかどうか
+        if (document.getElementsByClassName('errorMessage').length > 0) {
+            errorAlert();
+        }
+    };
+</script>
+
+
+</body>
+
+</html>

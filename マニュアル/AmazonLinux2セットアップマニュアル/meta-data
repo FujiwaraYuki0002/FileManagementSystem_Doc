@@ -1,0 +1,20 @@
+local-hostname: DESKTOP-KQ5A1CE
+
+# local-hostnameに仮想マシンのホスト名を記載する。
+# eth0 is the default network interface enabled in the image. You can configure static network settings with an entry like the following.
+network-interfaces: |
+  auto eth0
+
+# eth0の設定をする。
+  iface eth0 inet static
+# eth0をstaticで設定する。
+  address 192.168.2.242
+# eth0のIPアドレスを設定する。
+  network 192.168.2.0
+# 仮想マシンが所属するネットワークアドレスを設定する。
+  netmask 255.255.255.0
+# 仮想マシンが所属するサブネットを設定する。
+  broadcast 192.168.2.255
+# 仮想マシンが所属するネットワークのブロードキャストを設定する。
+  gateway 192.168.2.254
+# 仮想マシンが所属するネットワークのデフォルトゲートウェイを設定する

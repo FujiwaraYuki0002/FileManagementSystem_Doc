@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>役職管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <div class="container">
+
+        <!--完了メッセージ-->
+        <th:if>
+            <!--		<div class="compelete-message">登録が完了しました</div>-->
+            <!--		<div class="compelete-message">更新が完了しました</div>-->
+            <!--		<div class="compelete-message">削除が完了しました</div>-->
+            <div class="non_compelete-message"></div>
+        </th:if>
+
+        <div class="title">
+            <h1>役職管理</h1>
+        </div>
+        <table class="post-table">
+            <thead>
+                <tr>
+                    <th>選択</th>
+                    <th>役職ID</th>
+                    <th>役職名</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="selectRadioButton('option1')">
+                    <td><input type="radio" name="option1" value="1" onclick="clearOtherRadios('option1')">
+                    </td>
+                    <td>1</td>
+                    <td>代表取締役</td>
+                </tr>
+                <tr onclick="selectRadioButton('option2')">
+                    <td><input type="radio" name="option2" value="2" onclick="clearOtherRadios('option1')"></td>
+                    <td>2</td>
+                    <td>専務取締役</td>
+                </tr>
+                <tr onclick="selectRadioButton('option3')">
+                    <td><input type="radio" name="option3" value="3" onclick="clearOtherRadios('option1')"></td>
+                    <td>3</td>
+                    <td>取締役</td>
+                </tr>
+                <tr onclick="selectRadioButton('option4')">
+                    <td><input type="radio" name="option4" value="A" onclick="clearOtherRadios('option1')"></td>
+                    <td>4</td>
+                    <td>マネージャー</td>
+                </tr>
+                <tr onclick="selectRadioButton('option5')">
+                    <td><input type="radio" name="option5" value="A" onclick="clearOtherRadios('option1')"></td>
+                    <td>5</td>
+                    <td>エキスパート</td>
+                </tr>
+                <tr onclick="selectRadioButton('option6')">
+                    <td><input type="radio" name="option6" value="A" onclick="clearOtherRadios('option1')"></td>
+                    <td>6</td>
+                    <td>リーダー</td>
+                </tr>
+                <tr onclick="selectRadioButton('option7')">
+                    <td><input type="radio" name="option7" value="A" onclick="clearOtherRadios('option1')"></td>
+                    <td>7</td>
+                    <td>なし</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="paging">
+            <input type="submit" value="l<" class="white button">
+            <input type="submit" value="<" class="white button">
+            <input type="submit" value=">" class="white button">
+            <input type="submit" value=">l" class="white button">
+            <p>1/1ページ</p>
+        </div>
+    </div>
+    <!--フッター-->
+    <footer>
+        <div class="right">
+            <form class="display-inline" action="index.html" method="post" onsubmit="return deletecheck()">
+                <input type="submit" value="削除" name="button1" class="button" disabled>
+                <input type="hidden" name="postId" value="1">
+            </form>
+            <form class="display-inline" action="update.html" method="post">
+                <input type="submit" value="編集" name="button2" class="button" disabled>
+                <input type="hidden" name="postId" value="1">
+            </form>
+            <input type="button" value="新規登録" class="button" onclick="location.href='insert.html'">
+        </div>
+    </footer>
+    <!-- オーバーレイ -->
+    <div id="overlay"></div>
+
+    <!-- エラーダイアログ -->
+    <div id="errorAlert">
+        <!--			<div class="errorMessage"></div>-->
+        <button id="okButton" onclick="closeAlert()">OK</button>
+    </div>
+</body>
+
+<script>
+    // 初期表示の処理
+    window.onload = function () {
+        // エラーがあるかどうか
+        if (document.getElementsByClassName('errorMessage').length > 0) {
+            errorAlert();
+        }
+    };
+</script>
+
+</html>

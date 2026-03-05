@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>ユーザー管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <div class="container">
+        <!--完了メッセージ-->
+        <th:if>
+            <!--		<div class="compelete-message">登録が完了しました</div>-->
+            <!--		<div class="compelete-message">更新が完了しました</div>-->
+            <div class="non_compelete-message"></div>
+        </th:if>
+        <div class="title">
+            <h1>ユーザー管理</h1>
+        </div>
+        <div class="user_type">
+            <input type="submit" value="現職者のみ" class="button" onclick="location.href='index.html'">
+            <input type="submit" value="退職者を含む" class="button" onclick="location.href='indexAllUser.html'">
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>選択</th>
+                    <th>ユーザーID</th>
+                    <th>ユーザー名</th>
+                    <th>ユーザー名(カナ)</th>
+                    <th>所属</th>
+                    <th>役職</th>
+                    <th>権限</th>
+                    <th>ステータス</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="selectRadioButton('option1')">
+                    <td><input type="radio" name="option1" value="A" onclick="clearOtherRadios('option1')"></td>
+                    <td>testUser001</td>
+                    <td>○○○○</td>
+                    <td>××××</td>
+                    <td>××××,××××</td>
+                    <td>××××</td>
+                    <td>管理者</td>
+                    <td>現職者</td>
+                </tr>
+                <tr onclick="selectRadioButton('option2')">
+                    <td><input type="radio" name="option2" value="A" onclick="clearOtherRadios('option3')"></td>
+                    <td>testUser002</td>
+                    <td>○○○○</td>
+                    <td>××××</td>
+                    <td>××××,××××</td>
+                    <td>××××</td>
+                    <td>一般</td>
+                    <td>現職者</td>
+                </tr>
+                <tr onclick="selectRadioButton('option3')">
+                    <td><input type="radio" name="option3" value="A" onclick="clearOtherRadios('option3')"></td>
+                    <td>testUser003</td>
+                    <td>○○○○</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>管理者</td>
+                    <td>現職者</td>
+                </tr>
+                <tr tr onclick="selectRadioButton('option4')">
+                    <td><input type="radio" name="option4" value="A" onclick="clearOtherRadios('option4')"></td>
+                    <td>testUser004</td>
+                    <td>○○○○</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>一般</td>
+                    <td>現職者</td>
+                </tr>
+                <tr tr onclick="selectRadioButton('option5')">
+                    <td><input type="radio" name="option5" value="A" onclick="clearOtherRadios('option5')"></td>
+                    <td>testUser005</td>
+                    <td>○○○○</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>××××</td>
+                    <td>一般</td>
+                    <td>現職者</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="paging">
+            <input type="submit" value="l<" class="white button">
+            <input type="submit" value="<" class="white button">
+            <input type="submit" value=">" class="white button">
+            <input type="submit" value=">l" class="white button">
+            <p>1/1ページ</p>
+        </div>
+        </form>
+    </div>
+    <!--フッター-->
+    <footer>
+        <div class="right">
+            <form class="display-inline" action="update.html" method="post">
+                <input type="submit" value="編集" name="button1" class="button" disabled>
+                <input type="hidden" name="userId" value="1">
+            </form>
+            <input type="button" value="新規登録" class="button" onclick="location.href='insert.html'">
+        </div>
+    </footer>
+</body>
+
+</html>

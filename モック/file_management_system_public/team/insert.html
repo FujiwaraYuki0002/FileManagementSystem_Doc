@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>所属登録</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<!--ヘッダー-->
+<header>
+    <span class="header-title">ファイル管理システム</span>
+    <a class="header-name">髙橋さん</a>
+</header>
+
+<!--メニュー-->
+<div class="menu">
+    <input type="checkbox" class="checkbox">
+    <div class="span-container">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="nav-container">
+        <h1>メニュー</h1>
+        <a href="../file/search.html">ファイル検索</a>
+        <a href="../file/index.html">ファイル管理</a>
+        <a href="../team/index.html">所属管理</a>
+        <a href="../post/index.html">役職管理</a>
+        <a href="../user/index.html">ユーザー管理</a>
+        <a href="../login.html">ログアウト</a>
+    </div>
+</div>
+
+<body>
+    <!--メイン-->
+    <div class="container">
+        <div class="non_compelete-message"></div>
+        <div class="title">
+            <h1>所属登録</h1>
+        </div>
+        <div class="center">
+            <div class="Form_layout">
+                <div class="content_left" style="padding-bottom: 0;margin: 0;">
+                    <label>登録済み情報</label>
+                </div>
+            </div>
+        </div>
+        <div class="center">
+            <div class="colmun">
+                <div class="content_left">
+                    <div class="overflow">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>所属ID</th>
+                                    <th>所属名</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>役員</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>第1流通チーム</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>第2流通チーム</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>自治体チーム</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>総務</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>本社</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>SESチーム</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>SESチーム</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>SESチーム</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>SESチーム</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="content_right  center">
+                    <div class="Form_layout">
+                        <label>所属名</label>
+                        <input type="text" style="font-size: 20px;" placeholder="1文字～20文字で入力してください" class="textbox"
+                            size="30" id="input1" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--フッター-->
+    <footer>
+        <div class="left">
+            <input type="button" value="戻る" class="button" onclick="location.href='index.html'">
+        </div>
+        <div class="right">
+            <form class="display-inline" action="index.html" method="post" onsubmit="return insertcheck()">
+                <input type="submit" value="登録" name="button1" class="button" id="submit1" disabled>
+                <input type="hidden" name="teamId" value="1">
+            </form>
+        </div>
+    </footer>
+
+    <!-- オーバーレイ -->
+    <div id="overlay"></div>
+
+    <!-- エラーダイアログ -->
+    <div id="errorAlert">
+        <!--			<div class="errorMessage"></div>-->
+        <button id="okButton" onclick="closeAlert()">OK</button>
+    </div>
+</body>
+<script>
+    //登録ボタン活性・非活性
+    $(function () {
+        $("#input1").on("keydown keyup keypress change", function () {
+            inputCheck(this)
+        });
+    });
+    // 初期表示の処理
+    window.onload = function () {
+        // エラーがあるかどうか
+        if (document.getElementsByClassName('errorMessage').length > 0) {
+            errorAlert();
+        }
+    };
+</script>
+
+</html>
